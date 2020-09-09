@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useRef, useMemo, useState } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from 'reducer';
@@ -13,12 +13,40 @@ const flicker = keyframes`
         opacity : 1;
     }
 `
+const FixedTopNav = styled.nav`
+    position : fixed;
+    z-index : 100;
+    height : ${props => props.theme.scrollFix === true ? 'initial' : '0%'};
+    top : 0;
+    width : 100%;
+    background-color : ${props => props.theme.black === true ? "rgba(24, 24, 24, 0.9)" : "#a8acad"};
+    transition : height 0.5s;
+    border-radius : 0px 0px 15px 15px;
+    box-shadow : 1px 1px 3px ${props => props.theme.black === true ? "#d9d9d9d9" : "#34343434"};
+
+    .title {
+        display : ${props => props.theme.scrollFix === true ? 'flex' : 'none'};
+        width : 100%;
+        justify-content : center;
+        font-size : 40px;
+        letter-spacing : 5px;
+        position : relative;
+
+        &:hover {
+            cursor : pointer;
+        }
+
+        * {
+            margin : 0;
+            padding : 0;
+        }
+    }
+`
 
 const MainNav = styled.nav`
-    /* position : fixed; */
     top : 0;
-    width : 100vw;
-    background-color : ${props => props.theme === true ? "black" : "#a8acad"};
+    width : 100%;
+    background-color : ${props => props.theme.black === true ? "black" : "#a8acad"};
 
      .title {
         display : flex;
@@ -66,11 +94,28 @@ const MainNav = styled.nav`
         }
      }
 
-
+     .subject {
+        display : flex;
+        width : 100%;
+        justify-content : center;
+        font-size : 24px;
+        letter-spacing : 2px;
+        position : relative;
+        text-shadow : 2px 4px 5px #777;
+     }
  `;
 
-const NavContainer = () => {
+type NavContainerProps = {
+    title ?: JSX.Element | string;
+    subject ?: JSX.Element | string;
+}
+
+const NavContainer = ({ title = <h4>Title</h4>, subject = "subject"} : NavContainerProps) => {
     const { theme } = useSelector((state : RootState) => state.theme);
+    
+    const mainNavRef = useRef<HTMLElement>(null);
+    const [scrollFix, setScrollFix] = useState(false);
+    const [oldScroll, setOldScroll] = useState(0);
     const dispatch = useDispatch();
 
 
@@ -80,15 +125,54 @@ const NavContainer = () => {
         })
     },[])
 
+    useEffect(() => {
+        const { current } = mainNavRef;
 
+        const scrollNavFix = () => {
+            if(current) {
+                if(window.scrollY > current?.clientHeight) {
+                    setOldScroll(window.scrollY)
+                    if(oldScroll > window.scrollY) {
+                        setScrollFix(true)
+                    } else {
+                        setScrollFix(false)
+                    }
+                } else {
+                    setScrollFix(false)
+                }
+            }
+        }
+        window.addEventListener('scroll', scrollNavFix)
+        return () => window.removeEventListener('scroll', scrollNavFix)
+    },[mainNavRef, oldScroll])
+
+
+    const themeMemo = useMemo(() => {
+        return {
+            black : theme,
+            scrollFix
+        }
+    },[theme, scrollFix])
+
+    const onClickScrollToTop = useCallback(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth'})
+    },[])
 
     return (
         <>
-        <MainNav theme={theme}>
+        <FixedTopNav onClick={onClickScrollToTop} theme={themeMemo}>
+            <div className="title">
+                {title}
+            </div>
+        </FixedTopNav>
+        <MainNav ref={mainNavRef} theme={themeMemo}>
             <div className="title">
                 <div></div>
-                <h4>!--</h4>
+                {title}
                 <BulbTwoTone onClick={onToggleTheme} twoToneColor={theme ? "#bdbdbdbd" : "gray"} className="theme-changer"></BulbTwoTone>
+            </div>
+            <div className="subject">
+                {subject}
             </div>
         </MainNav>
         </>

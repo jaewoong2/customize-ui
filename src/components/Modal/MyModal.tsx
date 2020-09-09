@@ -30,8 +30,8 @@ const MyModalDiv = styled.div`
     .content {
         position : absolute;
         max-width : 500px;
-        width : 65%;
-        background-color : ${props => props.theme.black === true ? 'rgba(0, 0, 0, 0.3)' : 'rgba(255, 255, 255, 0.1)'};
+        width : 75%;
+        background-color : ${props => props.theme.black === true ? 'rgba(122, 122, 122, 0.9)' : 'rgba(255, 255, 255, 0.8)'};
         /* border : 5px solid rgba(110, 43, 255, 0.5); */
         /* box-shadow : -2px -2px 4px rgb(122, 133, 240); */
         border : ${props => props.theme.black === true ? '5px solid rgba(0, 0, 0, 0.5)' : '5px solid rgba(110, 43, 255, 0.5)'};

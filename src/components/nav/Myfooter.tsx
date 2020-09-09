@@ -14,8 +14,6 @@ const MyFooter = styled.footer`
     color : ${props => props.theme === true ? "white" : "black"};
 `
 
-
-
 const Myfooter = () => {
     const { theme } = useSelector((state : RootState) => state.theme);
 

@@ -2,13 +2,25 @@ import React, { useState, useEffect } from 'react'
 import MyModal from 'components/Modal/MyModal'
 import MyInput from 'components/input/MyInput'
 import MyImageSlide from 'components/ImageSlide/MyImageSlide';
+import styled from 'styled-components';
+import MyLoading from 'components/Loading/MyLoading';
+
+const MainDiv = styled.div`
+    width : 100%;
+    height : 100%;
+
+    .image-wrapper {
+        width : 100%;
+        height : 350px;
+    }
+`
 
 const MainSection = () => {
     const [visible, setVisible] = useState(false);
     const [imageArray, setImageArray] = useState<string[]>([]);
 
     useEffect(() => {
-        for(let i = 0; i < 2; i++) {
+        for(let i = 0; i < 5; i++) {
             const randomNumber = Math.floor(Math.random() * 150);
             const Imagesrc = `https://source.unsplash.com/collection/${randomNumber})}`;
             setImageArray(prev => prev.concat(Imagesrc));
@@ -16,7 +28,7 @@ const MainSection = () => {
     },[])
 
     return (
-        <div>
+        <MainDiv>
             <button onClick={() => setVisible(prev => !prev)}>모달</button>
             <MyModal 
             top={'로그인'}
@@ -35,8 +47,17 @@ const MainSection = () => {
                 <MyInput/>
                 <MyInput/>
             </MyModal>
-            <MyImageSlide imageArray={imageArray}/>
-        </div>
+            <div className="image-wrapper">
+            <MyImageSlide 
+            interval={false}
+            draggable={false}
+            imageArray={imageArray}/>
+            </div>
+            {/* <div style={{ left : '0px', top: '0px', width : '100vw', height : '100vh', position : 'absolute', display : 'flex', justifyContent : 'center', alignItems : 'center', backgroundColor : 'rgba(255, 255, 255, 0.2)' }}> */}
+            {/* <MyLoading/> */}
+            <div style={{ width : '100%', height : '1200px'}}></div>
+            {/* </div> */}
+        </MainDiv>
         
     )
 }

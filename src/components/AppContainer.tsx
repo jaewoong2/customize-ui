@@ -9,32 +9,29 @@ import Myfooter from './nav/Myfooter'
 const MainDiv = styled.div`
    color :  ${props => props.theme === true? 'whitesmoke' : 'black'};
    
-   width : 100vw;
-   height : 100vh;
+   width : 100%;
+   /* height : 100vh; */
+   /* 높이 설정이 100%, vh 면 window.addeventListener('scroll') 안됨 */
    overflow-x : hidden;
 
    transition : background-color 0.5s, color 0.5s;
 
    main {
        width : 100%;
-       height : 100%;
        display : flex;
        background-color : ${props => props.theme === true ? "gray" : 'whitesmoke'};
         
        .section-1 {
             width : 20%;
-            height : 100%;
             border : 1px solid black;
         }
         .section-2 {
             width : 60%;
-            height : 100%;
             border : 1px solid black;
         }
 
         .section-3 {
             width : 20%;
-            height : 100%;
             border : 1px solid black;
         }
 

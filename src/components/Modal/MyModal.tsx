@@ -21,6 +21,7 @@ const MyModalDiv = styled.div`
     position : absolute;
     left : 0;
     top : 0;
+    z-index : 100;
 
     display : ${props => props.theme.visible === true ? 'flex' : 'none'};
     justify-content : center;

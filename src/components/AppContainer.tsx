@@ -13,6 +13,7 @@ const MainDiv = styled.div`
    /* height : 100vh; */
    /* 높이 설정이 100%, vh 면 window.addeventListener('scroll') 안됨 */
    overflow-x : hidden;
+   overflow-y : auto;
 
    transition : background-color 0.5s, color 0.5s;
 

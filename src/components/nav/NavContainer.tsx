@@ -13,33 +13,12 @@ const flicker = keyframes`
         opacity : 1;
     }
 `
-const FixedTopNav = styled.nav`
-    position : fixed;
-    z-index : 100;
-    height : ${props => props.theme.scrollFix === true ? 'initial' : '0%'};
-    top : 0;
-    width : 100%;
-    background-color : ${props => props.theme.black === true ? "rgba(24, 24, 24, 0.9)" : "#a8acad"};
-    transition : height 0.5s;
-    border-radius : 0px 0px 15px 15px;
-    box-shadow : 1px 1px 3px ${props => props.theme.black === true ? "#d9d9d9d9" : "#34343434"};
-
-    .title {
-        display : ${props => props.theme.scrollFix === true ? 'flex' : 'none'};
-        width : 100%;
-        justify-content : center;
-        font-size : 40px;
-        letter-spacing : 5px;
-        position : relative;
-
-        &:hover {
-            cursor : pointer;
-        }
-
-        * {
-            margin : 0;
-            padding : 0;
-        }
+const smoothScroll = keyframes`
+    0% {
+        transform : translateY(-40px);
+    }
+    100% {
+        transform : translateY(0px);
     }
 `
 
@@ -94,30 +73,54 @@ const MainNav = styled.nav`
         }
      }
 
-     .subject {
+     .menu {
         display : flex;
         width : 100%;
-        justify-content : center;
+        justify-content : space-between;
         font-size : 24px;
-        letter-spacing : 2px;
-        position : relative;
-        text-shadow : 2px 4px 5px #777;
+        letter-spacing : -.4px;
+        transition: all 1s ease;
+
+        .scrollToTop {
+            width : 32px;
+            height : 32px;
+            border-radius : 50%;
+            background-color : white;
+            box-shadow : 1px 1px 2px rgba(0, 0, 0, 0.5);
+            float : right;
+            &:hover {
+                cursor : pointer;
+            }
+        }
+     }
+
+     .fixed {
+        position : fixed;
+        top : 0;
+        z-index : 100;
+        background-color : ${props => props.theme.black === true ?  'rgb(244, 244, 244)': 'rgb(25, 25, 25)'} ;
+        border-bottom : 1px solid ${props => props.theme.black === false ?  'rgb(244, 244, 244)': 'rgb(25, 25, 25)'};
+        color : ${props => props.theme.black === false ?  'rgb(244, 244, 244)': 'rgb(25, 25, 25)'} ;
+        animation : ${smoothScroll} 1s forwards;
      }
  `;
 
 type NavContainerProps = {
     title ?: JSX.Element | string;
     subject ?: JSX.Element | string;
+    upScrollFix ?: boolean// 다운스크롤의 반대;
+    downScrollFix ?: boolean // 업스크롤의 반대;
 }
 
-const NavContainer = ({ title = <h4>Title</h4>, subject = "subject"} : NavContainerProps) => {
+const NavContainer = ({ title = <h4>Title</h4>, subject = "subject", upScrollFix = false, downScrollFix=true} : NavContainerProps) => {
     const { theme } = useSelector((state : RootState) => state.theme);
+    const mainNavRef = useRef<HTMLDivElement>(null);
     
-    const mainNavRef = useRef<HTMLElement>(null);
     const [scrollFix, setScrollFix] = useState(false);
+    
     const [oldScroll, setOldScroll] = useState(0);
+    
     const dispatch = useDispatch();
-
 
     const onToggleTheme = useCallback(() => {
         dispatch({
@@ -131,12 +134,15 @@ const NavContainer = ({ title = <h4>Title</h4>, subject = "subject"} : NavContai
         const scrollNavFix = () => {
             if(current) {
                 if(window.scrollY > current?.clientHeight) {
-                    setOldScroll(window.scrollY)
-                    if(oldScroll > window.scrollY) {
-                        setScrollFix(true)
-                    } else {
-                        setScrollFix(false)
-                    }
+                downScrollFix && setScrollFix(true) // 내렸을 때 fix
+                    
+            if(upScrollFix) {
+                setOldScroll(window.scrollY)
+                oldScroll > window.scrollY ? setScrollFix(true) : setScrollFix(false)
+                // 밑에 있는 상태에서 스크롤을 올리면 fix
+            }
+
+            
                 } else {
                     setScrollFix(false)
                 }
@@ -144,7 +150,8 @@ const NavContainer = ({ title = <h4>Title</h4>, subject = "subject"} : NavContai
         }
         window.addEventListener('scroll', scrollNavFix)
         return () => window.removeEventListener('scroll', scrollNavFix)
-    },[mainNavRef, oldScroll])
+
+    },[mainNavRef, oldScroll, downScrollFix, upScrollFix])
 
 
     const themeMemo = useMemo(() => {
@@ -160,19 +167,17 @@ const NavContainer = ({ title = <h4>Title</h4>, subject = "subject"} : NavContai
 
     return (
         <>
-        <FixedTopNav onClick={onClickScrollToTop} theme={themeMemo}>
-            <div className="title">
-                {title}
-            </div>
-        </FixedTopNav>
-        <MainNav ref={mainNavRef} theme={themeMemo}>
-            <div className="title">
+        <MainNav theme={themeMemo}>
+            <div className="title" ref={mainNavRef} >
                 <div></div>
                 {title}
                 <BulbTwoTone onClick={onToggleTheme} twoToneColor={theme ? "#bdbdbdbd" : "gray"} className="theme-changer"></BulbTwoTone>
             </div>
-            <div className="subject">
+            <div className={scrollFix ? "menu fixed" : "menu"}>
+                <div>
                 {subject}
+                </div>
+                <div className="scrollToTop" onClick={onClickScrollToTop}/>
             </div>
         </MainNav>
         </>

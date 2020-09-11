@@ -1,0 +1,51 @@
+@keyframes alert {
+    from {
+        transform: translateX(100%);
+    }
+    to {
+        transform: translateX(0%);
+    }
+}
+    .alert-dasdfar21 {
+        position: fixed;
+        bottom: 2px;
+        height: 30px;
+        box-shadow: rgba(0, 0, 0, 0.9) 2px 2px 4px;
+        background-color: rgba(255, 255, 255, 0.75);
+        border-radius: 10px 0px 0px 10px;
+        display: flex;
+        align-items: center;
+        font-size: 0.85rem;
+        letter-spacing: -0.4px;
+        animation: alert 1s forwards;
+        transition : transform 0.4s;
+    }
+
+
+    @keyframes persentageBar {
+        from {
+            width : 0;
+            opacity : 0.5;
+        }
+        to {
+            width : 95%;
+            opacity : 1;
+        }
+    }
+
+.alert-dasdfar21 > .persentagebar{
+        position: absolute;
+        top: 0px;
+        right: 0;
+        width : 95%;
+        height: 3px;
+        
+        transform: rotate(180deg);
+        transition-delay: width -1s;
+        animation: persentageBar 3s;
+        margin-left: 25ppx;
+    }
+
+.alert-dasdfar21 div{
+        margin: 0 10px 0 25px;
+    }

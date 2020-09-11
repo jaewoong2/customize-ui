@@ -3,7 +3,7 @@ import styled from 'styled-components'
 
 const MainButton = styled.button`
     border : 0;
-    box-shadow: 0 3px 6px -2px;
+    box-shadow: 0 2px 4px -2px;
     border-radius : 4px;
     transition: transform .4s, filter .3s;
     font-size: 0.85rem;
@@ -22,20 +22,28 @@ const MainButton = styled.button`
     }
 
     &:hover {
-        cursor : pointer;
-        filter : brightness(120%);
-        transition-property: filter;
+        cursor : ${props => props.theme.disabled === false ? 'pointer' : 'not-allowed'};
+        filter : ${props => props.theme.disabled === false ? 'brightness(120%);' : 'none'};
+        transition-property : ${props => props.theme.disabled === false ? 'filter' : 'none'};
     }
 
     text-decoration : ${props => props.theme.disabled === true ? 'line-through' : 'none'};
     
     &:active {
         font-size: 0.85rem;
-        transform: scale(0.95);
+        transform: ${props => props.theme.disabled === false ? 'scale(0.95);' : 'none'};;
     }
 `
 
-const MyButton = ({ children, style, primary, disabled, warning } : any) => {
+type myButtonProps = {
+    children ?: React.ReactNode, 
+    style ?: React.CSSProperties | object,
+    primary ?: boolean,
+    disabled ?: boolean,
+    warning ? : boolean
+}
+
+const MyButton = ({ children, style, primary, disabled = false, warning } : any) => {
 
     const styleMemo = useMemo(() => style,[style]);
     const themeMemo = useMemo(() => {

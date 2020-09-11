@@ -6,6 +6,8 @@ import styled from 'styled-components';
 import MyLoading from 'components/Loading/MyLoading';
 import MyCard from 'components/card/MyCard';
 import MyButton from 'components/button/MyButton';
+import useAlert from 'components/alert/useAlert';
+import MyAlert from 'components/alert/MyAlert';
 
 const MainDiv = styled.div`
     width : 100%;
@@ -28,6 +30,7 @@ const MainSection = () => {
             setImageArray(prev => prev.concat(Imagesrc));
         }
     },[])
+
 
     return (
         <MainDiv>
@@ -58,7 +61,11 @@ const MainSection = () => {
             {/* <div style={{ left : '0px', top: '0px', width : '100vw', height : '100vh', position : 'absolute', display : 'flex', justifyContent : 'center', alignItems : 'center', backgroundColor : 'rgba(255, 255, 255, 0.2)' }}> */}
             {/* <MyLoading/> */}
             <div style={{ width : '280px', marginLeft : "30%" }}>
-                <MyCard title="카드 컴포넌트" main={<h3 style={{ height : "220px"}}>안녕</h3>} bottom={<div style={{ width: '100%'}}><MyButton style={{ float : 'right', marginRight : "15px" }}>확인</MyButton></div>} />
+                <MyCard 
+                title="카드 컴포넌트" 
+                main={<h3 style={{ height : "220px"}}>안녕</h3>} 
+                bottom={<div style={{ width: '100%'}}><MyButton 
+                style={{ float : 'right', marginRight : "15px" }}>확인</MyButton></div>} />
             </div>
             <div style={{ width : '100%', height : '1200px'}}></div>
             {/* </div> */}

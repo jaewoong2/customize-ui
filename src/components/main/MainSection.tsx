@@ -1,13 +1,11 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import MyModal from 'components/Modal/MyModal'
 import MyInput from 'components/input/MyInput'
 import MyImageSlide from 'components/ImageSlide/MyImageSlide';
 import styled from 'styled-components';
-import MyLoading from 'components/Loading/MyLoading';
 import MyCard from 'components/card/MyCard';
 import MyButton from 'components/button/MyButton';
-import useAlert from 'components/alert/useAlert';
-import MyAlert from 'components/alert/MyAlert';
+import { MessageState } from 'contexts/MessageContext';
 
 const MainDiv = styled.div`
     width : 100%;
@@ -22,6 +20,8 @@ const MainDiv = styled.div`
 const MainSection = () => {
     const [visible, setVisible] = useState(false);
     const [imageArray, setImageArray] = useState<string[]>([]);
+    const message = useContext(MessageState)
+
 
     useEffect(() => {
         for(let i = 0; i < 5; i++) {
@@ -30,8 +30,8 @@ const MainSection = () => {
             setImageArray(prev => prev.concat(Imagesrc));
         }
     },[])
-
-
+    
+    
     return (
         <MainDiv>
             <button onClick={() => setVisible(prev => !prev)}>모달</button>
@@ -64,7 +64,11 @@ const MainSection = () => {
                 <MyCard 
                 title="카드 컴포넌트" 
                 main={<h3 style={{ height : "220px"}}>안녕</h3>} 
-                bottom={<div style={{ width: '100%'}}><MyButton 
+                bottom={<div style={{ width: '100%'}}>
+                <MyButton 
+                onClick={() => {
+                message('메시지 띄우기 성공', { position : { bottomLeft : true }, info : { warn : true }, timeOut : 3500 })
+            }}
                 style={{ float : 'right', marginRight : "15px" }}>확인</MyButton></div>} />
             </div>
             <div style={{ width : '100%', height : '1200px'}}></div>

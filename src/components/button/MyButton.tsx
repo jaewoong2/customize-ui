@@ -41,9 +41,10 @@ type myButtonProps = {
     primary ?: boolean,
     disabled ?: boolean,
     warning ? : boolean
+    onClick ?: () => void;
 }
 
-const MyButton = ({ children, style, primary, disabled = false, warning } : any) => {
+const MyButton = ({ onClick, children, style, primary, disabled = false, warning } : myButtonProps) => {
 
     const styleMemo = useMemo(() => style,[style]);
     const themeMemo = useMemo(() => {
@@ -55,7 +56,7 @@ const MyButton = ({ children, style, primary, disabled = false, warning } : any)
     },[primary, warning, disabled]);
 
     return (
-        <MainButton disabled={disabled ? true : false} theme={themeMemo} style={styleMemo}>
+        <MainButton onClick={onClick} disabled={disabled ? true : false} theme={themeMemo} style={styleMemo}>
             <div className="children">
                 {children}
             </div>    

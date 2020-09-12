@@ -1,38 +1,48 @@
-import React, { createContext, Dispatch, useReducer } from 'react'
+import MyAlert, { optionsProps } from "components/alert/MyAlert";
+import React, { createContext, useCallback, useState } from "react";
 
-type MessageState = {
-    message ?: string;
-}
+export const MessageState = createContext<any | undefined>(undefined);
 
-const MessageContext = createContext<MessageState | undefined>(undefined);
+  export function TodosContextProvider({ children }: { children: React.ReactNode }) {
+    const [messages, setMessages] = useState<{message ?: string; options ?: optionsProps; render ?: boolean}[]>([]);
+    const options = {
+               position : {
+                    bottomRight : true,
+                    bottomLeft : false,
+                },
+                info : {
+                    success : false,
+                    warn : false,
+                    normal : true,
+                },
+                timeOut :  3500,
+                cancleable : true 
+            };
 
-type Action = 
-    | { type : 'MESSAGE'; message : string }
-
-type MessageDispatch = Dispatch<Action>;
-
-const MessageDispathContext = createContext<MessageDispatch | undefined>(undefined);
-
-
-function messageReducer(state : MessageState, action : Action) : MessageState {
-    switch(action.type) {
-        case 'MESSAGE' :
-            return {
-                ...state,
-                message : action.message,
-            }
-        default :
-            return state
-    }
-}
-
-export function MessageContextProvider({ children } : { children : React.ReactNode }) {
-    const [message, dispatch] = useReducer(messageReducer, {message : ""});
+    const messaging = useCallback((text : string, option ?: optionsProps) => {
+        const newOption = {
+            cancleable : option?.cancleable || options?.cancleable,
+            info : {
+                normal: option?.info?.normal || options?.info?.normal ,
+                success: option?.info?.success || options?.info?.success,
+                warn : option?.info?.warn || options?.info?.warn
+            },
+            position : {
+                bottomRight : option?.position?.bottomRight || options?.position?.bottomRight,
+                bottomLeft : option?.position?.bottomLeft || options?.position?.bottomLeft,
+            },
+            timeOut : option?.timeOut || options?.timeOut 
+        }
+        setMessages(prev => [...prev, { message : text, options : newOption }])
+    },[options])
+    
     return (
-        <MessageDispathContext.Provider value={dispatch}>
-        <MessageContext.Provider value={message}>
-          {children}
-        </MessageContext.Provider>
-      </MessageDispathContext.Provider> 
-    )
-}
+      <MessageState.Provider value={messaging}>
+            {children}
+            {messages.map(v => (
+                <MyAlert text={v?.message} options={v?.options}/>
+            ))}
+      </MessageState.Provider>
+    );
+  }
+

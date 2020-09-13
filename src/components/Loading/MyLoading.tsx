@@ -13,8 +13,8 @@ const loadingAnimation = keyframes`
     }
 `
 const LoadingWrapper = styled.div`
-    width : 100%;
-    height  : 100%;
+    width : ${props => props.theme.width};
+    height : ${props => props.theme.height};
     max-width : 300px;
     max-height : 200px;
 
@@ -30,11 +30,11 @@ const LoadingWrapper = styled.div`
         margin-left : 5px;
         margin-right : 5px;
         /* 블랙모드 있을 떄, */
-        background-color : ${props => props.theme.black === true ? 'rgba(200, 200, 200, 0.9)' : (props.theme.color ? props.theme.color : 'rgba(11, 10, 10, 1)')};
+        background-color : ${props => Boolean(props.theme.color) === true ? props.theme.color : 'rgba(200, 200, 200, 0.9)'};
        /*  블랙모드 구현 하지 않을 때 */
         /* background-color : ${props => (props.theme.color ? props.theme.color : 'rgba(11, 10, 10, 1)')}; */
         transition : height 0.3s;
-        animation : ${loadingAnimation} 1s infinite;
+        animation : ${loadingAnimation} 0.8s infinite;
     }
 
     div:nth-child(1) {
@@ -49,18 +49,22 @@ const LoadingWrapper = styled.div`
 `
 
 type MyLoadingProps = {
-    color ?: 'string' 
+    color ?: string;
+    width ?: number | string;
+    height ?: number | string;
 }
 
-const MyLoading = ({ color } : MyLoadingProps ) => {
+const MyLoading = ({ color, width = "100%", height = "100%"} : MyLoadingProps ) => {
     const { theme } = useSelector((state : RootState)  => state.theme);
 
     const themeMemo = useMemo(() => {
         return {
             black : theme,
-            color : color
+            color : color,
+            height,
+            width,
         }
-    },[color, theme])
+    },[color, width, height])
 
     return (
         <LoadingWrapper theme={themeMemo}>

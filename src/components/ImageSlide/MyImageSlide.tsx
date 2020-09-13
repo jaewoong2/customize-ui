@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react'
+import React, { useState, useEffect, useCallback, useMemo, Fragment } from 'react'
 import styled from 'styled-components';
 
 const MainDiv = styled.div`
@@ -44,9 +44,7 @@ const MainDiv = styled.div`
 
             input[type="checkbox" i] {
                 display : none;
-                
             }
-            
 
             input[type="checkbox" i] + span {
                 margin-right : 5px;
@@ -174,7 +172,7 @@ const MyImageSlide = ({ interval = true, intervalTime = 2000, imageArray, dragga
             }, intervalTime)
             return () => clearInterval(intervalRight)
         }
-    },[onClickRight, intervalTime, intervalState])
+    },[onClickRight, intervalTime, intervalState, imageLength])
 
     useEffect(() => {
         setImageLength(imageArray.length -1)
@@ -237,7 +235,7 @@ const MyImageSlide = ({ interval = true, intervalTime = 2000, imageArray, dragga
             <span className="left" onClick={onClickLeft}>{left}</span>
             <ImageWrapper theme={themeMemo}>
             {imageArray.map((images, imageIndex) => (
-                <div className="image-container" onDragEnd={onDragEndImage} onDragStart={onDragStartImage}>
+                <div key={imageIndex + 'image-container'} className="image-container" onDragEnd={onDragEndImage} onDragStart={onDragStartImage}>
                     <img
                       className="image"
                       key={'image' + imageIndex}
@@ -252,11 +250,11 @@ const MyImageSlide = ({ interval = true, intervalTime = 2000, imageArray, dragga
             <span className="right" onClick={onClickRight}>{right}</span>
             <div className="bottom">
             {imageArray.map((images, i) => (
-                <>
-                <input key={'image-bottom-check' + i} className="bottom-toggle" checked={i === parseInt(nowImage[0], 10)}  type="checkbox"/>
+                <Fragment key={'image-bottom-div' + i}>
+                <input key={'image-bottom-check' + i} className="bottom-toggle" readOnly checked={i === parseInt(nowImage[0], 10)}  type="checkbox"/>
                 <span key={'image-bottom-span' + i} onClick={onClickBottom(i)}></span>
-                </>
-            ))}
+                </Fragment>
+                ))}
             </div>
         </MainDiv>
     )

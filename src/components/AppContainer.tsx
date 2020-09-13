@@ -10,10 +10,8 @@ const MainDiv = styled.div`
    color :  ${props => props.theme === true? 'whitesmoke' : 'black'};
    
    width : 100%;
-   /* height : 100vh; */
-   /* 높이 설정이 100%, vh 면 window.addeventListener('scroll') 안됨 */
+   /* 높이 설정이 100%, vh 면 window.addeventListener(scroll') 안됨 */
    overflow-x : hidden;
-   overflow-y : auto;
 
    transition : background-color 0.5s, color 0.5s;
 

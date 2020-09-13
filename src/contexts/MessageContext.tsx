@@ -1,12 +1,17 @@
 import MyAlert, { optionsProps } from "components/alert/MyAlert";
-import React, { createContext, useCallback, useState } from "react";
+import React, { createContext, useCallback, useEffect, useMemo, useState } from "react";
 
-export const MessageState = createContext<any | undefined>(undefined);
 
-  export function TodosContextProvider({ children }: { children: React.ReactNode }) {
-    const [messages, setMessages] = useState<{message ?: string; options ?: optionsProps; render ?: boolean}[]>([]);
-    const options = {
-               position : {
+  type MessageContextState = (text: string, option?: optionsProps) => void;
+  const defaultState = (text: string, option?: optionsProps | any) => {}
+  export const MessageState = createContext<MessageContextState>(defaultState);
+
+  export function MessageContextProvider({ children }: { children: React.ReactNode }) {
+    const [messages, setMessages] = useState<{message ?: string; options ?: optionsProps;}[]>([]);
+    const [text, setText] = useState<string>('');
+    
+    const intialOptions : optionsProps | any = useMemo(() => ({
+                position : {
                     bottomRight : true,
                     bottomLeft : false,
                 },
@@ -16,31 +21,39 @@ export const MessageState = createContext<any | undefined>(undefined);
                     normal : true,
                 },
                 timeOut :  3500,
-                cancleable : true 
-            };
+                cancleable : true,
+                emoji : true,
+          }),[]);
 
-    const messaging = useCallback((text : string, option ?: optionsProps) => {
-        const newOption = {
-            cancleable : option?.cancleable || options?.cancleable,
-            info : {
-                normal: option?.info?.normal || options?.info?.normal ,
-                success: option?.info?.success || options?.info?.success,
-                warn : option?.info?.warn || options?.info?.warn
-            },
-            position : {
-                bottomRight : option?.position?.bottomRight || options?.position?.bottomRight,
-                bottomLeft : option?.position?.bottomLeft || options?.position?.bottomLeft,
-            },
-            timeOut : option?.timeOut || options?.timeOut 
-        }
-        setMessages(prev => [...prev, { message : text, options : newOption }])
-    },[options])
+    const [newOption, setNewOption] = useState<optionsProps | undefined>(intialOptions);
+
+    useEffect(() => {
+      text !== "" && setMessages(prev => prev.concat({ message : text, options : newOption }))
+    },[newOption, text])
+    
+    useEffect(() => {
+      messages.forEach(message => {
+        if(message.message === "") setMessages(prev => prev.filter(message => message.message !== ""));
+      })
+    },[messages])
+    
+    const messaging = useCallback((text : string, option ?: optionsProps | any) : void => {
+          setText(text);
+          setNewOption(() => {
+            let returnOption : optionsProps | undefined | any = {};
+            for(let key in intialOptions) {
+                if(option[key] !== undefined) returnOption[key] = option[key] ;
+                else if(!returnOption[key]) returnOption[key] = intialOptions[key];
+            }
+            return returnOption
+          })
+      },[intialOptions])
     
     return (
       <MessageState.Provider value={messaging}>
             {children}
-            {messages.map(v => (
-                <MyAlert text={v?.message} options={v?.options}/>
+            {messages.map((v, index) => (
+                <MyAlert key={"aliert" + index} index={index} setMessages={setMessages} text={v?.message} options={v?.options}/>
             ))}
       </MessageState.Provider>
     );

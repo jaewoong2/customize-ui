@@ -21,7 +21,14 @@ const smoothScroll = keyframes`
         transform : translateY(0px);
     }
 `
-
+const upButton = keyframes`
+    0% {
+        transform : translateX(-100px);
+    }
+    100% {
+        transform : translateX(0%);
+    }
+`
 const MainNav = styled.nav`
     top : 0;
     width : 100%;
@@ -81,17 +88,6 @@ const MainNav = styled.nav`
         letter-spacing : -.4px;
         transition: all 1s ease;
 
-        .scrollToTop {
-            width : 32px;
-            height : 32px;
-            border-radius : 50%;
-            background-color : white;
-            box-shadow : 1px 1px 2px rgba(0, 0, 0, 0.5);
-            float : right;
-            &:hover {
-                cursor : pointer;
-            }
-        }
      }
 
      .fixed {
@@ -103,6 +99,28 @@ const MainNav = styled.nav`
         color : ${props => props.theme.black === false ?  'rgb(244, 244, 244)': 'rgb(25, 25, 25)'} ;
         animation : ${smoothScroll} 1s forwards;
      }
+
+    .scrollToTop {
+        display : none;
+        bottom : 15px;
+        left : 15px;
+        font-size : 32px;
+        filter : drop-shadow(2px 2px 3px #777);
+        /* width : 32px; */
+        /* height : 32px;  */
+        /* border-radius : 50%; */
+        /* background-color : white; */
+        /* box-shadow : 1px 1px 2px rgba(0, 0, 0, 0.5); */
+    }
+
+    .btnfix {
+        display : flex;
+        position : fixed;
+        animation : ${upButton} 1s;
+        &:hover {
+            cursor : pointer;
+        }
+    }
  `;
 
 type NavContainerProps = {
@@ -142,7 +160,6 @@ const NavContainer = ({ title = <h4>Title</h4>, subject = "subject", upScrollFix
                 // 밑에 있는 상태에서 스크롤을 올리면 fix
             }
 
-            
                 } else {
                     setScrollFix(false)
                 }
@@ -177,8 +194,10 @@ const NavContainer = ({ title = <h4>Title</h4>, subject = "subject", upScrollFix
                 <div>
                 {subject}
                 </div>
-                <div className="scrollToTop" onClick={onClickScrollToTop}/>
             </div>
+            <span role="img" aria-label="up" className={scrollFix ? "scrollToTop btnfix" : "scrollToTop"} onClick={onClickScrollToTop}>
+            🔺
+            </span>
         </MainNav>
         </>
     )

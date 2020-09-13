@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react'
 import styled, { css, keyframes } from 'styled-components'
 
 const showAlertRight = keyframes`
@@ -43,11 +43,11 @@ const persentageBar = keyframes`
 const MainDiv = styled.div`
         position: fixed;
         bottom: 2px;
-        height: 30px;
+        height: 40px;
         box-shadow: rgba(0, 0, 0, 0.9) 2px 2px 4px;
         background-color: rgba(255, 255, 255, 0.75);
         display : ${props => props.theme.timeOut.cancel === true ? 'none' : 'flex'};
-        border-radius: 10px 0px 0px 10px;
+        border-radius: 6px 0px 0px 2px;
         align-items: center;
         font-size: 0.85rem;
         letter-spacing: -0.4px;
@@ -94,15 +94,19 @@ export type optionsProps = {
     };
     timeOut ?: number;
     cancleable ?: boolean;
+    emoji ?: boolean;
 }
 
 type MyAlertProps = {
     text ?: string;
     options ?: optionsProps;
+    style ?: React.CSSProperties | object,
+    setMessages ?: Dispatch<SetStateAction<{ message?: string | undefined; options?: optionsProps | undefined; }[]>>
+    index ?: number;
 }
 
 
-const MyAlert = ({ text, options } : MyAlertProps) => {
+const MyAlert = ({ text, options, style, setMessages, index } : MyAlertProps) => {
     const [animation, setAnimation] = useState(false);
     const [cancel, setCancel] = useState(false);
 
@@ -116,7 +120,13 @@ const MyAlert = ({ text, options } : MyAlertProps) => {
             setCancel(true)
         },  options?.timeOut + 1000)
     }
-    },[options])
+        if(setMessages) {
+            if(cancel === true) setMessages(prev => {
+                return prev.map((v, i) => (i === index) ? { message : "", options : {}} : v)
+            }
+        );
+    }
+    },[options, cancel, index, setMessages])
 
     const onClickMain = useCallback(() => {
         if(options?.cancleable) {
@@ -125,7 +135,7 @@ const MyAlert = ({ text, options } : MyAlertProps) => {
                 setCancel(true)
             },  1000)
         }
-    },[])
+    },[options])
 
     const themeMemo = useMemo(() => {
         return {
@@ -143,12 +153,13 @@ const MyAlert = ({ text, options } : MyAlertProps) => {
      // element에서 alert제거
 
     return (
-        <MainDiv onClick={onClickMain} theme={themeMemo}>
+        <MainDiv style={style} onClick={onClickMain} theme={themeMemo}>
             <span className="persentageBar"></span>
             <div className="subDiv">
-                {options?.info?.success ?  text + "⭕" :
+            {options?.emoji && (options?.info?.success ?  text + "⭕" :
                  options?.info?.warn ? text + "❌" :
-                 text + "😀"}
+                 text + "😀")}
+            {!options?.emoji&& text}
             </div>
         </MainDiv>
     )

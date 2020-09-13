@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useEffect, useContext, useCallback } from 'react'
 import MyModal from 'components/Modal/MyModal'
 import MyInput from 'components/input/MyInput'
 import MyImageSlide from 'components/ImageSlide/MyImageSlide';
@@ -6,6 +6,8 @@ import styled from 'styled-components';
 import MyCard from 'components/card/MyCard';
 import MyButton from 'components/button/MyButton';
 import { MessageState } from 'contexts/MessageContext';
+import MyMenu from 'components/menu/MyMenu';
+import MyLoading from 'components/Loading/MyLoading';
 
 const MainDiv = styled.div`
     width : 100%;
@@ -19,8 +21,9 @@ const MainDiv = styled.div`
 
 const MainSection = () => {
     const [visible, setVisible] = useState(false);
+    const [menuVisible, setMenuVisible] = useState(false);
     const [imageArray, setImageArray] = useState<string[]>([]);
-    const message = useContext(MessageState)
+    const message = useContext(MessageState);
 
 
     useEffect(() => {
@@ -29,12 +32,24 @@ const MainSection = () => {
             const Imagesrc = `https://source.unsplash.com/collection/${randomNumber})}`;
             setImageArray(prev => prev.concat(Imagesrc));
         }
-    },[])
+        message('효림아 안녕', { emoji : false })
+    },[message])
+
+    const onClickCardButton = useCallback(() => {
+        message('버튼을 눌렀습니다.', { emoji : true, position : { bottomLeft : true }, info : { success : true} })
+    },[message])
     
+    const onClickMenuButton = useCallback(() => {
+        setMenuVisible(prev => !prev)
+    },[])
+
     
     return (
         <MainDiv>
-            <button onClick={() => setVisible(prev => !prev)}>모달</button>
+            <MyLoading height="40px" width={"20%"}/>
+            <MyMenu menus={['1','2','3','4']} visible={menuVisible} setVisible={setMenuVisible} />
+            <MyButton fontSize="1rem" style={{width : '90px' }} primary onClick={onClickMenuButton}>메뉴</MyButton>
+            <MyButton fontSize="1rem" style={{width : '90px' }} primary onClick={() => setVisible(prev => !prev)}>모달</MyButton>
             <MyModal 
             top={'로그인'}
             mask={true} 
@@ -66,9 +81,7 @@ const MainSection = () => {
                 main={<h3 style={{ height : "220px"}}>안녕</h3>} 
                 bottom={<div style={{ width: '100%'}}>
                 <MyButton 
-                onClick={() => {
-                message('메시지 띄우기 성공', { position : { bottomLeft : true }, info : { warn : true }, timeOut : 3500 })
-            }}
+                onClick={onClickCardButton}
                 style={{ float : 'right', marginRight : "15px" }}>확인</MyButton></div>} />
             </div>
             <div style={{ width : '100%', height : '1200px'}}></div>

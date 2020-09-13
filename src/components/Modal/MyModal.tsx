@@ -1,5 +1,5 @@
-import React, { useState, useCallback, useEffect } from 'react'
-import styled, { keyframes } from 'styled-components'
+import React, { useState, useCallback, useEffect, useMemo } from 'react'
+import styled, { css, keyframes } from 'styled-components'
 import { useSelector } from 'react-redux'
 import { RootState } from 'reducer'
 
@@ -11,6 +11,25 @@ const TopWidthAnimaiton = keyframes`
         width : 90%;
     }
 `
+const showContent = keyframes`
+    0% {
+        transform : translateY(-100%);
+    }
+    75% {
+        transform : translateY(10%);
+    }
+    100% {
+        transform : translateY(0%);
+    }
+`
+const closeContent = keyframes`
+    0% {
+        transform : scale(1);
+    }
+    100% {
+        transform : scale(0.7);
+    }
+`
 
 const MyModalDiv = styled.div`
     width : 100vw;
@@ -18,15 +37,13 @@ const MyModalDiv = styled.div`
     /* background : rgba(0, 0, 0, 0.5); */
     background-color : ${props => props.theme.black === true ? 'rgba(0, 0, 0, 0.5)' : 'rgba(200, 200, 200, 0.4)'};
     backdrop-filter: blur(4px);
-    position : absolute;
+    position : fixed;
     left : 0;
     top : 0;
     z-index : 100;
-
-    display : ${props => props.theme.visible === true ? 'flex' : 'none'};
+    display : flex;
     justify-content : center;
     
-
     .content {
         position : absolute;
         max-width : 500px;
@@ -40,6 +57,12 @@ const MyModalDiv = styled.div`
         border-radius : 12px;
         display : flex;
         flex-direction : column;
+        ${props => props.theme.visible === true ? css`
+        animation : ${showContent} 1s;
+        ` :css`
+        animation : ${closeContent} 0.9s;
+        `
+        };
 
         .main {
             display : flex;
@@ -106,26 +129,37 @@ type ModalProps = {
 
 const MyModal = ({ cancel,  mask = true, visible = true ,top = true, setVisible, children} : ModalProps) => {
         const { theme } = useSelector((state : RootState) => state.theme);
-        const [themes, setThemes] = useState({});
+        const [modalVisible, setModalVisible] = useState(visible);
+
+        const themes = useMemo(() => ({
+                black : theme,
+                animationVisible : modalVisible,
+                visible : visible
+        }),[theme, modalVisible, visible])
 
         useEffect(() =>{
-            setThemes({
-                black : theme,
-                visible : visible
-            })
-        },[theme, visible])
+            setTimeout(() => {
+                setModalVisible(visible)
+            }, 700);
+            visible === true && document.body.classList.add('not-scroll');
+            visible === false && document.body.classList.remove('not-scroll');
+        },[visible])
 
         const onClickMask = useCallback((e : React.MouseEvent<HTMLDivElement, MouseEvent>) => {
             if(mask) {
                 if(e.currentTarget === e.target) {
-                    setVisible(false);
+                    visible === modalVisible && setVisible(false);
                 }
             }
-        },[mask])
+        },[mask, visible, modalVisible, setVisible])
 
         const onClickCancel = useCallback(() => {
-            setVisible(false);
-        },[])
+            visible === modalVisible && setVisible(false);
+        },[visible, modalVisible, setVisible])
+
+        if(!visible && !modalVisible) {
+            return <></>
+        }
         
     return (
         <MyModalDiv onClick={onClickMask} theme={themes}>

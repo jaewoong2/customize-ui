@@ -6,7 +6,7 @@ const MainButton = styled.button`
     box-shadow: 0 2px 4px -2px;
     border-radius : 4px;
     transition: transform .4s, filter .3s;
-    font-size: 0.85rem;
+    font-size: ${props => props.theme.fontSize};
     background-color : ${props => 
     props.theme.primary === true ? 'rgba(25, 115, 245, 0.7)' : 
     props.theme.warning === true ? 'rgba(255, 50, 40, 0.8)' : 
@@ -36,24 +36,24 @@ const MainButton = styled.button`
 `
 
 type myButtonProps = {
-    children ?: React.ReactNode, 
-    style ?: React.CSSProperties | object,
-    primary ?: boolean,
-    disabled ?: boolean,
-    warning ? : boolean
+    children ?: React.ReactNode; 
+    style ?: React.CSSProperties | object;
+    fontSize ?: number | string;
+    primary ?: boolean;
+    disabled ?: boolean;
+    warning ? : boolean;
     onClick ?: () => void;
 }
 
-const MyButton = ({ onClick, children, style, primary, disabled = false, warning } : myButtonProps) => {
+const MyButton = ({ fontSize = '0.85rem', onClick, children, style, primary, disabled = false, warning } : myButtonProps) => {
 
     const styleMemo = useMemo(() => style,[style]);
-    const themeMemo = useMemo(() => {
-        return {
+    const themeMemo = useMemo(() => ({
             primary, 
             warning,
-            disabled,    
-        } 
-    },[primary, warning, disabled]);
+            disabled,
+            fontSize
+    }),[primary, warning, disabled, fontSize]);
 
     return (
         <MainButton onClick={onClick} disabled={disabled ? true : false} theme={themeMemo} style={styleMemo}>

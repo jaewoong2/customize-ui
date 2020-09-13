@@ -1,6 +1,7 @@
-import { TodosContextProvider } from 'contexts/MessageContext'
+import { MessageContextProvider } from 'contexts/MessageContext'
 import React from 'react'
 import AppContainer from './components/AppContainer'
+import { BrowserRouter } from 'react-router-dom';
 
 
 
@@ -11,9 +12,11 @@ const App = () => {
 
   return (
     <div>
-      <TodosContextProvider>
+      <BrowserRouter>
+      <MessageContextProvider>
       <AppContainer/>
-      </TodosContextProvider>
+      </MessageContextProvider>
+      </BrowserRouter>
     </div>
   )
 }

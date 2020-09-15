@@ -34,6 +34,13 @@ const InputWrapper = styled.div`
             outline : 0;
             color: ${props => props.theme === true ? "white" : "black"};
         }
+
+        &::placeholder {
+            color : ${props => props.theme === true ? "white" : "black"};
+            opacity : 0.4;
+            letter-spacing : 1.1;
+            font-size : 0.75rem;
+        }
     }
 
     &:focus-within {
@@ -74,7 +81,8 @@ const InputCustom = ({icon, name, placeholder, value, onChange, suffix} : InputC
             </div>
             <input 
             className="input"
-            name={name} type={name}
+            name={name} 
+            type={name}
             required value={value || ''}
             onChange={onChange}
             placeholder={placeholder}

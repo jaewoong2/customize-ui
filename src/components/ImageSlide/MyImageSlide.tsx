@@ -1,3 +1,4 @@
+import MyLoading from 'components/Loading/MyLoading';
 import React, { useState, useEffect, useCallback, useMemo, Fragment } from 'react'
 import styled from 'styled-components';
 
@@ -129,13 +130,14 @@ type MyImageSlideProps = {
     imageArray : string[];
     draggable ?: boolean;
     keyDown ?: boolean;
+    loading ?: boolean;
     interval ?: boolean;
     intervalTime ?: number;
     left ?: JSX.Element | string;
     right ?: JSX.Element | string;
 }
 
-const MyImageSlide = ({ interval = true, intervalTime = 2000, imageArray, draggable = true, keyDown = true, left = "◀︎", right = "▶"} : MyImageSlideProps) => {
+const MyImageSlide = ({ loading, interval = true, intervalTime = 2000, imageArray, draggable = true, keyDown = true, left = "◀︎", right = "▶"} : MyImageSlideProps) => {
     const [imageLength, setImageLength] = useState<number>(0);
     // 이미지 총 길이
 
@@ -232,7 +234,8 @@ const MyImageSlide = ({ interval = true, intervalTime = 2000, imageArray, dragga
 
     return (
         <MainDiv onKeyDown={onKeyDownImage}>
-            <span className="left" onClick={onClickLeft}>{left}</span>
+            {loading === true ? (<MyLoading/>) : 
+            (<><span className="left" onClick={onClickLeft}>{left}</span>
             <ImageWrapper theme={themeMemo}>
             {imageArray.map((images, imageIndex) => (
                 <div key={imageIndex + 'image-container'} className="image-container" onDragEnd={onDragEndImage} onDragStart={onDragStartImage}>
@@ -255,7 +258,8 @@ const MyImageSlide = ({ interval = true, intervalTime = 2000, imageArray, dragga
                 <span key={'image-bottom-span' + i} onClick={onClickBottom(i)}></span>
                 </Fragment>
                 ))}
-            </div>
+            </div></>
+            )}
         </MainDiv>
     )
 }

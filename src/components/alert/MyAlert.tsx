@@ -95,6 +95,7 @@ export type optionsProps = {
     timeOut ?: number;
     cancleable ?: boolean;
     emoji ?: boolean;
+    visible ?: boolean,
 }
 
 type MyAlertProps = {
@@ -106,34 +107,39 @@ type MyAlertProps = {
 }
 
 
-const MyAlert = ({ text, options, style, setMessages, index } : MyAlertProps) => {
+const MyAlert = ({ text, options, style, setMessages, index = 0} : MyAlertProps) => {
     const [animation, setAnimation] = useState(false);
     const [cancel, setCancel] = useState(false);
 
     useEffect(() => {
         if(options?.timeOut) {
-            setTimeout(() => {
+            const timer1 =setTimeout(() => {
             setAnimation(true)
         }, options?.timeOut);
 
-        setTimeout(() => {
+        const timer2 =setTimeout(() => {
             setCancel(true)
         },  options?.timeOut + 1000)
+
+        return () => {
+            clearTimeout(timer1)
+            clearTimeout(timer2)
+        }
     }
-        if(setMessages) {
-            if(cancel === true) setMessages(prev => {
-                return prev.map((v, i) => (i === index) ? { message : "", options : {}} : v)
-            }
-        );
-    }
-    },[options, cancel, index, setMessages])
+    },[options, cancel])
+
+    useEffect(() => {
+        if(cancel) if(setMessages) setMessages(prevMessages => prevMessages.map((v, i) => i === index ? 
+        { message : v.message, options : { ...v.options, visible : false} } : v))
+    }, [cancel, setMessages, index])
 
     const onClickMain = useCallback(() => {
         if(options?.cancleable) {
             setAnimation(true)
-            setTimeout(() => {
+            const timer1 = setTimeout(() => {
                 setCancel(true)
             },  1000)
+            return () => clearTimeout(timer1)
         }
     },[options])
 

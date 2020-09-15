@@ -23,18 +23,19 @@ import React, { createContext, useCallback, useEffect, useMemo, useState } from 
                 timeOut :  3500,
                 cancleable : true,
                 emoji : true,
+                visible : true,
           }),[]);
 
     const [newOption, setNewOption] = useState<optionsProps | undefined>(intialOptions);
 
     useEffect(() => {
-      text !== "" && setMessages(prev => prev.concat({ message : text, options : newOption }))
+      text !== "" && setMessages(prev => [...prev, {message : text, options : newOption}])
     },[newOption, text])
     
     useEffect(() => {
-      messages.forEach(message => {
-        if(message.message === "") setMessages(prev => prev.filter(message => message.message !== ""));
-      })
+      if(messages.length > 0) {
+        if(!messages.find(v => v?.options?.visible === true)) setMessages([])
+      }
     },[messages])
     
     const messaging = useCallback((text : string, option ?: optionsProps | any) : void => {

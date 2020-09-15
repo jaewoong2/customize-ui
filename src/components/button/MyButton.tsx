@@ -31,7 +31,8 @@ const MainButton = styled.button`
     
     &:active {
         font-size: 0.85rem;
-        transform: ${props => props.theme.disabled === false ? 'scale(0.95);' : 'none'};;
+        filter: hue-rotate(20deg);
+        transform: ${props => props.theme.disabled === false ? 'scale(0.95);' : 'none'};
     }
 `
 
@@ -43,9 +44,10 @@ type myButtonProps = {
     disabled ?: boolean;
     warning ? : boolean;
     onClick ?: () => void;
+    type ?: "button" | "submit" | "reset" | undefined;
 }
 
-const MyButton = ({ fontSize = '0.85rem', onClick, children, style, primary, disabled = false, warning } : myButtonProps) => {
+const MyButton = ({ type, fontSize = '0.85rem', onClick, children, style, primary, disabled = false, warning } : myButtonProps) => {
 
     const styleMemo = useMemo(() => style,[style]);
     const themeMemo = useMemo(() => ({
@@ -56,7 +58,7 @@ const MyButton = ({ fontSize = '0.85rem', onClick, children, style, primary, dis
     }),[primary, warning, disabled, fontSize]);
 
     return (
-        <MainButton onClick={onClick} disabled={disabled ? true : false} theme={themeMemo} style={styleMemo}>
+        <MainButton type={type} onClick={onClick} disabled={disabled ? true : false} theme={themeMemo} style={styleMemo}>
             <div className="children">
                 {children}
             </div>    

@@ -8,6 +8,7 @@ import MyButton from 'components/button/MyButton';
 import { MessageState } from 'contexts/MessageContext';
 import MyMenu from 'components/menu/MyMenu';
 import MyLoading from 'components/Loading/MyLoading';
+import MySignUp from 'components/form/MySignUp';
 
 const MainDiv = styled.div`
     width : 100%;
@@ -21,23 +22,26 @@ const MainDiv = styled.div`
 
 const MainSection = () => {
     const [visible, setVisible] = useState(false);
+    const [loading, setLoading] = useState(false);
     const [menuVisible, setMenuVisible] = useState(false);
     const [imageArray, setImageArray] = useState<string[]>([]);
     const message = useContext(MessageState);
 
 
     useEffect(() => {
+        setLoading(true)
         for(let i = 0; i < 5; i++) {
             const randomNumber = Math.floor(Math.random() * 150);
-            const Imagesrc = `https://source.unsplash.com/collection/${randomNumber})}`;
+            const Imagesrc = `https://source.unsplash.com/collection/${randomNumber}`;
             setImageArray(prev => prev.concat(Imagesrc));
         }
+        setLoading(false)
         message('효림아 안녕', { emoji : false })
     },[message])
 
     const onClickCardButton = useCallback(() => {
         message('버튼을 눌렀습니다.', { emoji : true, position : { bottomLeft : true }, info : { success : true} })
-    },[message])
+    },[])
     
     const onClickMenuButton = useCallback(() => {
         setMenuVisible(prev => !prev)
@@ -51,24 +55,16 @@ const MainSection = () => {
             <MyButton fontSize="1rem" style={{width : '90px' }} primary onClick={onClickMenuButton}>메뉴</MyButton>
             <MyButton fontSize="1rem" style={{width : '90px' }} primary onClick={() => setVisible(prev => !prev)}>모달</MyButton>
             <MyModal 
-            top={'로그인'}
+            top="회원가입"
             mask={true} 
             visible={visible} 
             setVisible={setVisible}
             >
-                <MyInput
-                    icon={'1'}
-                    suffix={'등록'}
-                />
-                <MyInput
-                 icon={'12'}
-                 suffix={'등록하기'}/>
-                <MyInput/>
-                <MyInput/>
-                <MyInput/>
+                <MySignUp/>
             </MyModal>
             <div className="image-wrapper">
             <MyImageSlide 
+            loading={loading}
             interval={false}
             draggable={false}
             imageArray={imageArray}/>

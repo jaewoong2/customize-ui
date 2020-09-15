@@ -9,6 +9,7 @@ import { MessageState } from 'contexts/MessageContext';
 import MyMenu from 'components/menu/MyMenu';
 import MyLoading from 'components/Loading/MyLoading';
 import MySignUp from 'components/form/MySignUp';
+import MyGrabSlider from 'components/grabSlider/MyGrabSlider';
 
 const MainDiv = styled.div`
     width : 100%;
@@ -17,6 +18,24 @@ const MainDiv = styled.div`
     .image-wrapper {
         width : 100%;
         height : 350px;
+    }
+
+    .image-contaienr-in-slider {
+        width : 100%;
+        height : 100%;
+        display : flex;
+        justify-content : center;
+        align-items : center;
+        flex-shrink: 0;
+        margin : 0 5px 0 5px;
+        img {
+            /* -webkit-user-drag: none; */
+            /* user-drag: none; */
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
     }
 `
 
@@ -50,6 +69,13 @@ const MainSection = () => {
     
     return (
         <MainDiv>
+            <MyGrabSlider height="460px">
+            {imageArray.map(image => (
+            <div className="image-contaienr-in-slider">
+                    <img  alt="asd" src={image}/>
+            </div>
+            ))}
+            </MyGrabSlider>
             <MyLoading height="40px" width={"20%"}/>
             <MyMenu menus={['1','2','3','4']} visible={menuVisible} setVisible={setMenuVisible} />
             <MyButton fontSize="1rem" style={{width : '90px' }} primary onClick={onClickMenuButton}>메뉴</MyButton>
